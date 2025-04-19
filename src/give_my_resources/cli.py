@@ -28,12 +28,11 @@ from .config import (
     get_ngrok_token, set_ngrok_token,
     get_ngrok_id, set_ngrok_id,
     set_tunnel_url,
-    API_BASE_URL, set_api_base_url
+    API_BASE_URL
 )
 from .heartbeat import HeartbeatMonitor, LOCAL_PORT
 
 WEB_APP_URL = "https://vibe25-resourcesharing-web-app.vercel.app/handler/sign-up"
-API_BASE_URL = "http://localhost:8787"
 
 monitor = HeartbeatMonitor()
 ngrok_tunnel: Optional[NgrokTunnelType] = None
@@ -385,18 +384,9 @@ def show_main_menu():
 @click.option('--hardreset', is_flag=True, help='Reset all user data and restart signup flow')
 @click.option('--deletejob', is_flag=True, help='Delete any queued job data from the device')
 @click.option('--use-ngrok', is_flag=True, help='Use ngrok to expose the local server publicly')
-@click.option('--dev', is_flag=True, default=False, help='Use development API endpoint (localhost:8787)')
-def main(ctx, hardreset, deletejob, use_ngrok, dev):
+def main(ctx, hardreset, deletejob, use_ngrok):
     global ngrok_tunnel
     
-    # Set API Base URL based on --dev flag
-    if dev:
-        set_api_base_url("http://localhost:8787")
-        click.echo(f"Using development API: {API_BASE_URL}")
-    else:
-        # The default is already set in config.py, but we can echo it for clarity
-        click.echo(f"Using production API: {API_BASE_URL}")
-
     if use_ngrok and ngrok is None:
         click.echo("Error: The 'pyngrok' library is required for --use-ngrok but not installed.", err=True)
         click.echo("Please install it using: pip install pyngrok", err=True)
@@ -592,7 +582,7 @@ def main(ctx, hardreset, deletejob, use_ngrok, dev):
              # This case should ideally be caught by the return statements above,
              # but added for robustness.
              click.echo("Failed to initialize ngrok tunnel as requested. Exiting.", err=True)
-        # else: # This case (not use_ngrok and ngrok_tunnel exists) shouldn't happen
+        # else: # This case (not use-ngrok and ngrok_tunnel exists) shouldn't happen
         #     pass 
 
 @main.command()

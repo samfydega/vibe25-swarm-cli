@@ -27,7 +27,6 @@ gmr hello
 - `--hardreset`: Reset all user data and restart signup flow
 - `--deletejob`: Delete any queued job data from the device (useful for debugging)
 - `--use-ngrok`: Use ngrok to expose the local heartbeat server publicly. Requires ngrok to be installed and configured (either automatically or manually). If not set, the device will not be publicly discoverable for receiving jobs.
-- `--dev`: Use development API endpoint (localhost:8787) instead of production.
 
 ## Building the Executable (macOS)
 

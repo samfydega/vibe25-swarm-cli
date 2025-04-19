@@ -11,11 +11,6 @@ CONFIG_FILE = CONFIG_DIR / 'config.json'
 # Default API Base URL (Production)
 API_BASE_URL = "https://vibe25-worker.pumpkin-executables.workers.dev/"
 
-def set_api_base_url(url: str):
-    """Set the API base URL globally"""
-    global API_BASE_URL
-    API_BASE_URL = url
-
 def ensure_config_dir():
     """Ensure the config directory exists"""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
