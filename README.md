@@ -1,4 +1,4 @@
-# give-my-resources
+# swarm-cli
 
 A command-line interface tool for resource management.
 
