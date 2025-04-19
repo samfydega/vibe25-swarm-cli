@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmr"
+version = "0.1.0"
+description = "A CLI tool for resource management"
+requires-python = ">=3.7"
+dependencies = [
+    "click>=8.0.0",
+    "psutil>=7.0.0",
+    "requests>=2.32.0",
+    "inquirer>=3.1.3",
+]
+
+[project.scripts]
+gmr = "give_my_resources.cli:main"
