@@ -52,10 +52,28 @@ atexit.register(cleanup_ngrok)
 
 def fetch_resources() -> List[Dict]:
     try:
+        click.echo(f"Making request to {API_BASE_URL}/devices...")  # Debug log
         response = requests.get(f"{API_BASE_URL}/devices", timeout=5)
+        click.echo(f"Got response with status code: {response.status_code}")  # Debug log
         response.raise_for_status()
-        return response.json()
-    except requests.RequestException:
+        resources = response.json()
+        click.echo(f"Successfully parsed response with {len(resources)} resources")  # Debug log
+        return resources
+    except requests.exceptions.Timeout:
+        click.echo("\nError: Request timed out while fetching resources")
+        click.pause()
+        return []
+    except requests.exceptions.ConnectionError:
+        click.echo("\nError: Could not connect to the server. Please check your internet connection.")
+        click.pause()
+        return []
+    except requests.exceptions.RequestException as e:
+        click.echo(f"\nError fetching resources: {str(e)}")
+        click.pause()
+        return []
+    except Exception as e:
+        click.echo(f"\nUnexpected error while fetching resources: {str(e)}")
+        click.pause()
         return []
 
 def fetch_budget_info(user_id: Optional[str]) -> Optional[Dict]:
@@ -181,10 +199,12 @@ def create_job_flow(selected_resource: Dict):
         click.pause()
 
 def display_resources():
+    click.echo("\nFetching resources...")  # Debug log
     resources = fetch_resources()
     
     if not resources:
         click.echo("\nNo resources available.")
+        click.pause()  # Add pause here so user can see the message
         return
         
     click.clear()
@@ -216,11 +236,16 @@ def display_resources():
     ]
     
     try:
+        click.echo(f"\nFound {len(choices)-1} resources")  # Debug log (subtract 1 for "Back to menu")
         answers = inquirer.prompt(questions)
         if answers and answers['resource'] != "back":
             create_job_flow(answers['resource'])
-    except (KeyboardInterrupt, EOFError):
-        pass
+    except (KeyboardInterrupt, EOFError) as e:
+        click.echo(f"\nError: {str(e)}")  # Debug log
+        click.pause()  # Add pause to see any error
+    except Exception as e:  # Add general exception handling
+        click.echo(f"\nUnexpected error: {str(e)}")
+        click.pause()  # Add pause to see any error
 
 def display_jobs():
     user_id = get_user_id()
@@ -303,8 +328,8 @@ def show_main_menu():
     try:
         while True:
             click.clear()
-            click.echo("\n=== Give My Permission ===\n")
-            click.echo("Share your device's power, run code remotely.\n")
+            click.echo("\n=== Swarm ===\n")
+            click.echo("Share your device's power, run code remotely, get paid.\n")
 
             # Display Budget Info if available
             if budget_info:
